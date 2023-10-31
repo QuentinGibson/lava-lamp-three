@@ -9,6 +9,7 @@ import * as dat from 'dat.gui';
 
 // const newFileUrl = new URL('../assets/Alpaca.gltf', import.meta.url)
 
+
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -24,23 +25,23 @@ const camera = new THREE.PerspectiveCamera(
   100
 );
 
-renderer.setClearColor(0xA3A3A3);
+renderer.setClearColor(0x000000);
 
-const orbit = new OrbitControls(camera, renderer.domElement);
+// const orbit = new OrbitControls(camera, renderer.domElement);
 
-camera.position.set(0, 0, 1);
-orbit.update();
+camera.position.set(0, 0, 0.3);
+// orbit.update();
 
 // const gui = new dat.GUI();
 
 const onlineShaderMaterial = new THREE.ShaderMaterial(lavaEffect)
-const planeGeometry = new THREE.PlaneGeometry(2, 1, 300, 300)
+const planeGeometry = new THREE.PlaneGeometry(2, 1, 100, 100)
 const planeMesh = new THREE.Mesh(planeGeometry, onlineShaderMaterial)
 scene.add(planeMesh)
 
 function animate() {
   renderer.render(scene, camera);
-  onlineShaderMaterial.uniforms.time.value += 0.01;
+  onlineShaderMaterial.uniforms.time.value += .0005;
 }
 
 renderer.setAnimationLoop(animate);
