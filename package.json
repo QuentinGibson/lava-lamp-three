@@ -16,7 +16,7 @@
     "three": "^0.133.0"
   },
   "devDependencies": {
-    "@parcel/transformer-glsl": "^2.10.1",
+    "@parcel/transformer-glsl": "^2.10.2",
     "@parcel/transformer-image": "^2.0.0-rc.0"
   }
 }

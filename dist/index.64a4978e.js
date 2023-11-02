@@ -587,17 +587,42 @@ var _onlineEffect2 = require("./onlineEffect2");
 var _onlineEffect2Default = parcelHelpers.interopDefault(_onlineEffect2);
 var _lavaEffect = require("./lavaEffect");
 var _lavaEffectDefault = parcelHelpers.interopDefault(_lavaEffect);
+var _css2Drenderer = require("three/examples/jsm/renderers/CSS2DRenderer");
 var _datGui = require("dat.gui");
 // const newFileUrl = new URL('../assets/Alpaca.gltf', import.meta.url)
 const renderer = new _three.WebGLRenderer({
     antialias: true
 });
+const mouseCoord = new _three.Vector2();
+const mouseTarget = new _three.Vector2();
+const headingText = "Fearless Lawyer";
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.domElement.style.clipPath = " polygon(0 0, 100% 0, 100% 30%, 0 100%)";
 document.body.appendChild(renderer.domElement);
 const scene = new _three.Scene();
 const camera = new _three.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
 renderer.setClearColor(0x000000);
+const container = document.createElement("div");
+container.style.width = "90%";
+container.style.height = "100%";
+container.style.mixBlendMode = "color-burn";
+const h1 = document.createElement("h1");
+h1.style.margin = 0;
+h1.style.lineHeight = "170px";
+h1.className = "header";
+h1.innerText = headingText;
+container.appendChild(h1);
+const headingContainer = new (0, _css2Drenderer.CSS2DObject)(container);
+scene.add(headingContainer);
+headingContainer.position.set(0, 0, 0);
 // const orbit = new OrbitControls(camera, renderer.domElement);
+const labelRenderer = new (0, _css2Drenderer.CSS2DRenderer)();
+labelRenderer.setSize(window.innerWidth, window.innerHeight);
+labelRenderer.domElement.style.position = "absolute";
+labelRenderer.domElement.style.top = "0px";
+labelRenderer.domElement.style.display = "flex";
+// labelRenderer.domElement.style.pointerEvents = "none"
+document.body.appendChild(labelRenderer.domElement);
 camera.position.set(0, 0, 0.3);
 // orbit.update();
 // const gui = new dat.GUI();
@@ -607,6 +632,7 @@ const planeMesh = new _three.Mesh(planeGeometry, onlineShaderMaterial);
 scene.add(planeMesh);
 function animate() {
     renderer.render(scene, camera);
+    labelRenderer.render(scene, camera);
     onlineShaderMaterial.uniforms.time.value += .0005;
 }
 renderer.setAnimationLoop(animate);
@@ -614,9 +640,16 @@ window.addEventListener("resize", function() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.setSize(window.innerWidth, this.window.innerHeight);
+});
+window.addEventListener("mousemove", function(e) {
+    mouseCoord.x = e.clientX;
+    mouseCoord.y = e.clientY;
+    mouseTarget.lerp(mouseCoord, 0.1);
+    h1.position.y = mouseTarget.y;
 });
 
-},{"three":"ktPTu","three/examples/jsm/controls/OrbitControls.js":"7mqRv","three/examples/jsm/loaders/GLTFLoader.js":"dVRsF","./customEffect":"cCGgk","./onlineEffect":"ftZHn","./onlineEffect2":"1UbZi","./lavaEffect":"dxVYy","dat.gui":"k3xQk","@parcel/transformer-js/src/esmodule-helpers.js":"1tqZA"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","three/examples/jsm/controls/OrbitControls.js":"7mqRv","three/examples/jsm/loaders/GLTFLoader.js":"dVRsF","./customEffect":"cCGgk","./onlineEffect":"ftZHn","./onlineEffect2":"1UbZi","./lavaEffect":"dxVYy","dat.gui":"k3xQk","@parcel/transformer-js/src/esmodule-helpers.js":"1tqZA","three/examples/jsm/renderers/CSS2DRenderer":"3tWLO"}],"ktPTu":[function(require,module,exports) {
 /**
  * @license
  * Copyright 2010-2021 Three.js Authors
@@ -33173,7 +33206,7 @@ const lavaEffect = {
 };
 exports.default = lavaEffect;
 
-},{"three":"ktPTu","../assets/shaders/lava.frag":"bgnDR","../assets/shaders/lava.vert":"2sCl2","@parcel/transformer-js/src/esmodule-helpers.js":"1tqZA","nice-color-palettes":"4B77H"}],"bgnDR":[function(require,module,exports) {
+},{"three":"ktPTu","../assets/shaders/lava.frag":"bgnDR","../assets/shaders/lava.vert":"2sCl2","nice-color-palettes":"4B77H","@parcel/transformer-js/src/esmodule-helpers.js":"1tqZA"}],"bgnDR":[function(require,module,exports) {
 module.exports = "#define GLSLIFY 1\nuniform float time;\nuniform float progress;\nuniform sampler2D texture1;\nuniform vec4 resolution;\nvarying vec2 vUv;\nvarying vec3 vColor;\n\nfloat PI = 3.141592653589793238;\n\nvoid main( void ) {\n  gl_FragColor = vec4(vColor, 1.);\n}";
 
 },{}],"2sCl2":[function(require,module,exports) {
@@ -35473,6 +35506,114 @@ var index = {
 };
 exports.default = index;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"1tqZA"}]},["jxZVK","goJYj"], "goJYj", "parcelRequire7930")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"1tqZA"}],"3tWLO":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "CSS2DObject", ()=>CSS2DObject);
+parcelHelpers.export(exports, "CSS2DRenderer", ()=>CSS2DRenderer);
+var _three = require("three");
+class CSS2DObject extends (0, _three.Object3D) {
+    constructor(element){
+        super();
+        this.element = element || document.createElement("div");
+        this.element.style.position = "absolute";
+        this.element.style.userSelect = "none";
+        this.element.setAttribute("draggable", false);
+        this.addEventListener("removed", function() {
+            this.traverse(function(object) {
+                if (object.element instanceof Element && object.element.parentNode !== null) object.element.parentNode.removeChild(object.element);
+            });
+        });
+    }
+    copy(source, recursive) {
+        super.copy(source, recursive);
+        this.element = source.element.cloneNode(true);
+        return this;
+    }
+}
+CSS2DObject.prototype.isCSS2DObject = true;
+//
+const _vector = new (0, _three.Vector3)();
+const _viewMatrix = new (0, _three.Matrix4)();
+const _viewProjectionMatrix = new (0, _three.Matrix4)();
+const _a = new (0, _three.Vector3)();
+const _b = new (0, _three.Vector3)();
+class CSS2DRenderer {
+    constructor(){
+        const _this = this;
+        let _width, _height;
+        let _widthHalf, _heightHalf;
+        const cache = {
+            objects: new WeakMap()
+        };
+        const domElement = document.createElement("div");
+        domElement.style.overflow = "hidden";
+        this.domElement = domElement;
+        this.getSize = function() {
+            return {
+                width: _width,
+                height: _height
+            };
+        };
+        this.render = function(scene, camera) {
+            if (scene.autoUpdate === true) scene.updateMatrixWorld();
+            if (camera.parent === null) camera.updateMatrixWorld();
+            _viewMatrix.copy(camera.matrixWorldInverse);
+            _viewProjectionMatrix.multiplyMatrices(camera.projectionMatrix, _viewMatrix);
+            renderObject(scene, scene, camera);
+            zOrder(scene);
+        };
+        this.setSize = function(width, height) {
+            _width = width;
+            _height = height;
+            _widthHalf = _width / 2;
+            _heightHalf = _height / 2;
+            domElement.style.width = width + "px";
+            domElement.style.height = height + "px";
+        };
+        function renderObject(object, scene, camera) {
+            if (object.isCSS2DObject) {
+                object.onBeforeRender(_this, scene, camera);
+                _vector.setFromMatrixPosition(object.matrixWorld);
+                _vector.applyMatrix4(_viewProjectionMatrix);
+                const element = object.element;
+                if (/apple/i.test(navigator.vendor)) // https://github.com/mrdoob/three.js/issues/21415
+                element.style.transform = "translate(-50%,-50%) translate(" + Math.round(_vector.x * _widthHalf + _widthHalf) + "px," + Math.round(-_vector.y * _heightHalf + _heightHalf) + "px)";
+                else element.style.transform = "translate(-50%,-50%) translate(" + (_vector.x * _widthHalf + _widthHalf) + "px," + (-_vector.y * _heightHalf + _heightHalf) + "px)";
+                element.style.display = object.visible && _vector.z >= -1 && _vector.z <= 1 ? "" : "none";
+                const objectData = {
+                    distanceToCameraSquared: getDistanceToSquared(camera, object)
+                };
+                cache.objects.set(object, objectData);
+                if (element.parentNode !== domElement) domElement.appendChild(element);
+                object.onAfterRender(_this, scene, camera);
+            }
+            for(let i = 0, l = object.children.length; i < l; i++)renderObject(object.children[i], scene, camera);
+        }
+        function getDistanceToSquared(object1, object2) {
+            _a.setFromMatrixPosition(object1.matrixWorld);
+            _b.setFromMatrixPosition(object2.matrixWorld);
+            return _a.distanceToSquared(_b);
+        }
+        function filterAndFlatten(scene) {
+            const result = [];
+            scene.traverse(function(object) {
+                if (object.isCSS2DObject) result.push(object);
+            });
+            return result;
+        }
+        function zOrder(scene) {
+            const sorted = filterAndFlatten(scene).sort(function(a, b) {
+                const distanceA = cache.objects.get(a).distanceToCameraSquared;
+                const distanceB = cache.objects.get(b).distanceToCameraSquared;
+                return distanceA - distanceB;
+            });
+            const zMax = sorted.length;
+            for(let i = 0, l = sorted.length; i < l; i++)sorted[i].element.style.zIndex = zMax - i;
+        }
+    }
+}
+
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"1tqZA"}]},["jxZVK","goJYj"], "goJYj", "parcelRequire7930")
 
 //# sourceMappingURL=index.64a4978e.js.map
